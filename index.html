@@ -214,6 +214,14 @@ button{font-family:inherit;font-size:inherit;cursor:pointer}
 .pframe.f-blue{background:#c3e5fb}
 .pframe.f-yellow{background:#ffeaa8}
 .pframe.f-none{background:transparent;padding:0;box-shadow:none}
+/* 写真の形（四角／角丸／円／楕円／対角角丸） */
+.pframe.sh-round{border-radius:14px}
+.pframe.sh-round .pimg,.pframe.sh-round .pempty{border-radius:10px}
+.pframe.sh-circle,.pframe.sh-ellipse{border-radius:50%}
+.pframe.sh-circle .pimg,.pframe.sh-circle .pempty,
+.pframe.sh-ellipse .pimg,.pframe.sh-ellipse .pempty{border-radius:50%}
+.pframe.sh-diag{border-radius:22px 0 22px 0}
+.pframe.sh-diag .pimg,.pframe.sh-diag .pempty{border-radius:18px 0 18px 0}
 .photos.tilt .ptile:nth-child(3n+1) .pframe{transform:rotate(-2deg)}
 .photos.tilt .ptile:nth-child(3n+2) .pframe{transform:rotate(1.6deg)}
 .photos.tilt .ptile:nth-child(3n+3) .pframe{transform:rotate(-.8deg)}
@@ -244,6 +252,49 @@ button{font-family:inherit;font-size:inherit;cursor:pointer}
 .ptile.zoom-open .pzoom{display:block}
 .pzoom input{width:100%}
 .photos.is-drop{outline:3px dashed var(--accent);outline-offset:3px}
+
+/* ============ イラスト ============ */
+.illusts{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;padding:2px 4px}
+.illusts.al-left{justify-content:flex-start}
+.illusts.al-center{justify-content:center}
+.illusts.al-right{justify-content:flex-end}
+.illusts.al-between{justify-content:space-between}
+.itile{position:relative}
+.iimg{display:block;height:var(--ih,84px);width:auto;max-width:100%}
+.itile.flip .iimg{transform:scaleX(-1)}
+.iempty{
+  height:var(--ih,84px);min-width:calc(var(--ih,84px) * 1.15);
+  border:2px dashed #c2cfd9;border-radius:8px;background:#f7fafc;
+  display:flex;align-items:center;justify-content:center;
+  color:#93a3b0;font-size:11px;text-align:center;cursor:pointer;padding:4px;
+}
+.iempty:hover{background:#e8f1f6;border-color:var(--accent);color:var(--accent)}
+.itools{position:absolute;left:2px;top:2px;display:none;gap:2px;z-index:15}
+.itile:hover .itools{display:flex}
+.itools button{
+  border:0;background:rgba(20,30,40,.72);color:#fff;border-radius:4px;
+  padding:2px 5px;font-size:11px;line-height:1.3;
+}
+.itools button:hover{background:rgba(20,30,40,.92)}
+.illusts.is-drop{outline:3px dashed var(--accent);outline-offset:3px}
+
+/* ============ 縦書き ============ */
+/* 縦書きでは「横方向」が行の進む向きになるため、幅を指定しないと
+   文章の長さだけ紙面の外まで横に伸びてしまう。必ず width:100% で止める */
+.tbox.vert,.essay.vert{
+  writing-mode:vertical-rl;text-orientation:mixed;
+  overflow:hidden;width:100%;
+}
+.tbox.vert .tb-body,.essay.vert .e-body{min-height:0;min-width:1.7em}
+.tbox.vert .tb-title,.essay.vert .e-title{margin-bottom:0;margin-left:3px}
+.essay.vert .e-author{margin-top:0;margin-left:4px}
+.blk.vert-over .tbox.vert,.blk.vert-over .essay.vert{
+  outline:2px dashed #e05a5a;outline-offset:2px;
+}
+.vert-warn{
+  display:none;font-size:10.5px;color:#c33;font-weight:700;margin-top:2px;
+}
+.blk.vert-over .vert-warn{display:block}
 
 /* ============ お誕生日 ============ */
 .bday{
@@ -311,6 +362,9 @@ button{font-family:inherit;font-size:inherit;cursor:pointer}
   [contenteditable]:focus{background:transparent}
   [data-ph]:empty::before{content:""}
   .pempty{border-color:#e3e9ee;color:transparent}
+  .iempty{border-color:transparent;color:transparent;background:transparent}
+  .blk.vert-over .tbox.vert,.blk.vert-over .essay.vert{outline:none}
+  .vert-warn{display:none !important}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 </style>
@@ -431,13 +485,32 @@ button{font-family:inherit;font-size:inherit;cursor:pointer}
       </ul>
       <p>写真は自動で軽くしてから取り込むので、ファイルが重くなりすぎません。<br>
       ※iPhoneのHEIC形式は読み込めません。JPEG（.jpg）で保存してからお使いください。</p>
-      <h4>3. 記事を足す</h4>
-      <p>ページの下にある「＋見出し帯」「＋本文」「＋写真」などのボタンで、必要な部品を足していきます。部品の右上に出るボタンで、順番の入れ替え・設定・削除ができます。</p>
-      <h4>4. はみ出しの確認</h4>
+      <h4>3. 写真の形を変える</h4>
+      <p>写真ブロックの右上「⚙」から<b>「写真の形」</b>を選ぶと、四角のほかに<b>角丸・円・楕円・対角を丸く</b>に変えられます。「円」を選んだときだけ、真円にするため比率は自動で正方形になります。<br>
+      「写真の比率」は、写真のマスの縦横の長さ（横長4:3、正方形、縦長3:4、ワイド16:9）の設定です。形とは別に組み合わせられます。</p>
+      <h4>4. イラストを入れる</h4>
+      <p>ページ下の<b>「＋ イラスト」</b>でイラスト専用のブロックを足せます。写真ブロックと違って白いフチや影がつかないので、<b>背景が透明なPNG</b>のイラストを選ぶと紙面にきれいに重なります。</p>
+      <ul>
+        <li>大きさ（とても小さい〜特大）と、並べる位置（左寄せ・中央・右寄せ・左右いっぱい）を選べます</li>
+        <li>1つのブロックに複数並べられます（「＋イラストを増やす」）</li>
+        <li>イラストの左上の「反転」で左右の向きを変えられます（向かい合わせにしたいときなど）</li>
+      </ul>
+      <p>イラスト素材はこのツールには入っていません。ふだんお使いの素材サイトからダウンロードしたものをお使いください。<br>
+      ※配布されている素材には、利用できる範囲が決められているものがあります。各サイトの利用条件をご確認ください。</p>
+      <h4>5. 縦書きにする</h4>
+      <p>「本文」と「寄稿・作文」のブロックは、「⚙」の<b>「縦書きにする」</b>で縦書きに切り替えられます。年頭のご挨拶やお品書きなどにお使いください。</p>
+      <ul>
+        <li>縦書きは<b>高さを決める必要があります</b>。「縦書きの高さ」で選んでください</li>
+        <li>文字が入りきらないと赤い点線と注意書きが出ます。高さを増やすか、文章を短くしてください</li>
+        <li><b>半角の数字（123）は横に倒れます。</b>全角（１２３）で入力してください</li>
+      </ul>
+      <h4>6. 記事を足す</h4>
+      <p>ページの下にある「＋見出し帯」「＋本文」「＋写真」「＋イラスト」などのボタンで、必要な部品を足していきます。部品の右上に出るボタンで、順番の入れ替え・設定・削除ができます。</p>
+      <h4>7. はみ出しの確認</h4>
       <p>1枚に収まらなくなると、赤い点線と「はみ出しています」の表示が出ます。文章を短くするか、部品を「▼」で次のページへ送ってください。</p>
-      <h4>5. 印刷する</h4>
+      <h4>8. 印刷する</h4>
       <p>右上の「印刷 / PDF保存」を押します。印刷画面で<b>「背景のグラフィック」にチェック</b>を入れると、色や枠がそのまま印刷されます。PDFで保存したいときは、プリンターの選択で「PDFとして保存」を選んでください。</p>
-      <h4>6. 次の号を作る</h4>
+      <h4>9. 次の号を作る</h4>
       <p>「次の号を作る」を押すと、今の紙面の型（見出しや配置）をそのまま残して、号数だけ1つ進んだ新しい号ができます。写真と本文を消すかどうかは選べます。</p>
     </div>
   </div>
@@ -452,6 +525,10 @@ const RIBBON_COLORS = [
   {v:"#ffa657",n:"橙"},{v:"#f492bc",n:"桃"},{v:"#a98ede",n:"紫"}
 ];
 const HB_COLORS = ["#e8483f","#f08a1d","#f2c118","#4caf50","#2196f3","#7e57c2","#e0559a"];
+/* 縦書きブロックの高さ（mm）。縦書きは高さを決めないと行が折り返せない */
+const VH_OPTS = [[45,"低い 45mm"],[60,"やや低い 60mm"],[70,"標準 70mm"],[90,"やや高い 90mm"],[120,"高い 120mm"],[160,"とても高い 160mm"],[230,"ページいっぱい 230mm"]];
+/* イラストの大きさ（px） */
+const IL_SIZES = [[48,"とても小さい"],[64,"小さい"],[84,"標準"],[110,"大きい"],[150,"とても大きい"],[210,"特大"]];
 
 /* ===================== ドキュメント ===================== */
 function uid(){
@@ -464,13 +541,15 @@ function todayWareki(){
 function newBlock(type){
   const b = {id:uid(), type:type};
   if(type==="ribbon"){ b.text=""; b.color="#ff7b7b"; }
-  if(type==="text"){ b.title=""; b.body=""; b.style="s-yellow"; b.size=13; b.showTitle=false; }
-  if(type==="photos"){ b.cols=3; b.bg="bg-none"; b.frame="f-white"; b.tilt=false; b.ratio="4/3"; b.caption=true; b.items=[emptyPhoto(),emptyPhoto(),emptyPhoto()]; }
+  if(type==="text"){ b.title=""; b.body=""; b.style="s-yellow"; b.size=13; b.showTitle=false; b.vertical=false; b.vh=70; }
+  if(type==="photos"){ b.cols=3; b.bg="bg-none"; b.frame="f-white"; b.tilt=false; b.ratio="4/3"; b.shape="sh-sq"; b.caption=true; b.items=[emptyPhoto(),emptyPhoto(),emptyPhoto()]; }
+  if(type==="illust"){ b.size=84; b.align="al-center"; b.items=[emptyIllust()]; }
   if(type==="bday"){ b.names=""; b.msg="おめでとうございます！！"; }
-  if(type==="essay"){ b.title=""; b.body=""; b.author=""; }
+  if(type==="essay"){ b.title=""; b.body=""; b.author=""; b.vertical=false; b.vh=70; }
   return b;
 }
 function emptyPhoto(){ return {id:uid(), src:"", cap:"", pos:50}; }
+function emptyIllust(){ return {id:uid(), src:"", flip:false}; }
 
 function newDoc(){
   const t = todayWareki();
@@ -554,7 +633,8 @@ async function saveNow(){
 }
 
 /* ===================== 画像取り込み ===================== */
-async function fileToDataURL(file){
+async function fileToDataURL(file, opts){
+  opts = opts || {};
   if(!/^image\//.test(file.type)){
     throw new Error(file.name+" は画像ファイルではありません");
   }
@@ -564,7 +644,7 @@ async function fileToDataURL(file){
   }catch(e){
     throw new Error(file.name+" を読み込めませんでした。\niPhoneのHEIC形式の場合は、JPEG（.jpg）に変換してからお使いください。");
   }
-  const MAX = 1600;
+  const MAX = opts.max || 1600;
   let w = bmp.width, h = bmp.height;
   const s = Math.min(1, MAX/Math.max(w,h));
   w = Math.max(1,Math.round(w*s)); h = Math.max(1,Math.round(h*s));
@@ -572,6 +652,8 @@ async function fileToDataURL(file){
   c.width=w; c.height=h;
   c.getContext("2d").drawImage(bmp,0,0,w,h);
   bmp.close && bmp.close();
+  /* イラストは背景の透過を残したいのでPNGのまま書き出す */
+  if(opts.alpha) return c.toDataURL("image/png");
   return c.toDataURL("image/jpeg",0.85);
 }
 function pickFiles(multiple){
@@ -704,15 +786,25 @@ function renderText(b){
   ], v=>{b.size=Number(v); render();}));
   row.appendChild(cfgCheck("小見出しをつける", b.showTitle, v=>{b.showTitle=v; render();}));
   cfg.appendChild(row);
+
+  const row2 = el("div","cfgrow");
+  row2.appendChild(cfgCheck("縦書きにする", b.vertical, v=>{b.vertical=v; render();}));
+  if(b.vertical){
+    row2.appendChild(cfgSelect("縦書きの高さ", b.vh||70, VH_OPTS, v=>{b.vh=Number(v); render();}));
+    row2.appendChild(el("span","hint","※ 半角の数字は横に倒れます。全角（１２３）で入力してください"));
+  }
+  cfg.appendChild(row2);
   box.appendChild(cfg);
 
-  const t = el("div","tbox "+b.style);
+  const t = el("div","tbox "+b.style+(b.vertical?" vert":""));
   t.style.fontSize = b.size+"px";
+  if(b.vertical) t.style.height = (b.vh||70)+"mm";
   if(b.showTitle){
     t.appendChild(editable("div","tb-title", b.title, "小見出し", v=>b.title=v));
   }
   t.appendChild(editable("div","tb-body", b.body, "本文を入力してください。改行もそのまま反映されます。", v=>b.body=v));
   box.appendChild(t);
+  if(b.vertical) box.appendChild(el("div","vert-warn no-print","文字が入りきっていません。高さを増やすか、文章を短くしてください。"));
   return box;
 }
 
@@ -724,7 +816,11 @@ function renderPhotos(b){
   const cfg = el("div","blk-cfg no-print");
   const r1 = el("div","cfgrow");
   r1.appendChild(cfgSelect("横に並べる枚数", b.cols, [[1,"1枚"],[2,"2枚"],[3,"3枚"],[4,"4枚"]], v=>{b.cols=Number(v); render();}));
-  r1.appendChild(cfgSelect("写真の形", b.ratio, [["4/3","横長 4:3"],["1/1","正方形"],["3/4","縦長 3:4"],["16/9","ワイド 16:9"]], v=>{b.ratio=v; render();}));
+  r1.appendChild(cfgSelect("写真の形", b.shape||"sh-sq", [
+    ["sh-sq","四角"],["sh-round","角丸"],["sh-circle","円"],
+    ["sh-ellipse","楕円"],["sh-diag","対角を丸く"]
+  ], v=>{b.shape=v; render();}));
+  r1.appendChild(cfgSelect("写真の比率", b.ratio, [["4/3","横長 4:3"],["1/1","正方形"],["3/4","縦長 3:4"],["16/9","ワイド 16:9"]], v=>{b.ratio=v; render();}));
   r1.appendChild(cfgSelect("背景", b.bg, [
     ["bg-none","なし"],["bg-sky","空と草原"],["bg-cream","クリーム"],
     ["bg-sakura","春（桃）"],["bg-autumn","秋（橙）"],["bg-winter","冬（水色）"]
@@ -749,19 +845,23 @@ function renderPhotos(b){
   const grid = el("div","pgrid");
   grid.style.gridTemplateColumns = `repeat(${b.cols},1fr)`;
 
+  const shape = b.shape || "sh-sq";
+  /* 円は正方形でないと真円にならないため比率を 1/1 に固定する */
+  const ratio = (shape==="sh-circle") ? "1/1" : b.ratio;
+
   b.items.forEach((it,idx)=>{
     const tile = el("div","ptile");
-    const fr = el("div","pframe "+b.frame);
+    const fr = el("div","pframe "+b.frame+" "+shape);
 
     if(it.src){
       const img = document.createElement("img");
       img.className="pimg"; img.src=it.src; img.alt="";
-      img.style.aspectRatio = b.ratio;
+      img.style.aspectRatio = ratio;
       img.style.objectPosition = "50% "+(it.pos==null?50:it.pos)+"%";
       fr.appendChild(img);
     }else{
       const ph = el("div","pempty","クリックして\n写真を選ぶ");
-      ph.style.aspectRatio = b.ratio;
+      ph.style.aspectRatio = ratio;
       ph.style.whiteSpace="pre-line";
       ph.addEventListener("click", async ()=>{
         const fs = await pickFiles(true);
@@ -881,17 +981,119 @@ function renderEssay(b){
   const box = el("div","blk");
   box.dataset.blk = b.id;
   box.appendChild(blockTools(b));
-  box.appendChild(el("div","blk-cfg no-print"));
 
-  const w = el("div","essay");
+  const cfg = el("div","blk-cfg no-print");
+  const row = el("div","cfgrow");
+  row.appendChild(cfgCheck("縦書きにする", b.vertical, v=>{b.vertical=v; render();}));
+  if(b.vertical){
+    row.appendChild(cfgSelect("縦書きの高さ", b.vh||70, VH_OPTS, v=>{b.vh=Number(v); render();}));
+    row.appendChild(el("span","hint","※ 半角の数字は横に倒れます。全角（１２３）で入力してください"));
+  }
+  cfg.appendChild(row);
+  box.appendChild(cfg);
+
+  const w = el("div","essay"+(b.vertical?" vert":""));
+  if(b.vertical) w.style.height = (b.vh||70)+"mm";
   w.appendChild(editable("div","e-title", b.title, "題名（例：「８４歳の誕生日」）", v=>b.title=v));
   w.appendChild(editable("div","e-body", b.body, "本文", v=>b.body=v));
   w.appendChild(editable("div","e-author", b.author, "寄稿者名", v=>b.author=v));
   box.appendChild(w);
+  if(b.vertical) box.appendChild(el("div","vert-warn no-print","文字が入りきっていません。高さを増やすか、文章を短くしてください。"));
   return box;
 }
 
-const RENDERERS = {ribbon:renderRibbon, text:renderText, photos:renderPhotos, bday:renderBday, essay:renderEssay};
+/* ===== イラスト =====
+   写真ブロックとの違い：背景の透過をPNGのまま残し、枠も影もつけない。
+   フリー素材サイトの素材は再配布できないため、アプリには同梱せず、
+   利用者がご自分でダウンロードした画像を貼り込む方式にしている。 */
+function renderIllust(b){
+  const box = el("div","blk");
+  box.dataset.blk = b.id;
+  box.appendChild(blockTools(b));
+
+  const cfg = el("div","blk-cfg no-print");
+  const r1 = el("div","cfgrow");
+  r1.appendChild(cfgSelect("大きさ", b.size||84, IL_SIZES, v=>{b.size=Number(v); render();}));
+  r1.appendChild(cfgSelect("並べる位置", b.align||"al-center", [
+    ["al-left","左寄せ"],["al-center","中央"],["al-right","右寄せ"],["al-between","左右いっぱいに広げる"]
+  ], v=>{b.align=v; render();}));
+  const addBtn = el("button","","＋イラストを増やす");
+  addBtn.style.cssText="border:1px solid #cfdae2;border-radius:5px;padding:3px 8px;background:#fff";
+  addBtn.addEventListener("click",()=>{b.items.push(emptyIllust()); render(); scheduleSave();});
+  r1.appendChild(addBtn);
+  cfg.appendChild(r1);
+  const r2 = el("div","cfgrow");
+  r2.appendChild(el("span","hint","背景が透明なPNGのイラストを選ぶと、紙面にきれいに重なります。"));
+  cfg.appendChild(r2);
+  box.appendChild(cfg);
+
+  if(!b.items.length) b.items.push(emptyIllust());
+
+  const wrap = el("div","illusts "+(b.align||"al-center"));
+  wrap.style.setProperty("--ih", (b.size||84)+"px");
+
+  b.items.forEach((it,idx)=>{
+    const tile = el("div","itile"+(it.flip?" flip":""));
+
+    if(it.src){
+      const img = document.createElement("img");
+      img.className="iimg"; img.src=it.src; img.alt="";
+      tile.appendChild(img);
+    }else{
+      const ph = el("div","iempty","クリックして\nイラストを選ぶ");
+      ph.style.whiteSpace="pre-line";
+      ph.addEventListener("click", async ()=>{
+        const fs = await pickFiles(true);
+        await loadIllust(b, idx, fs);
+      });
+      tile.appendChild(ph);
+    }
+
+    const tools = el("div","itools no-print");
+    const mk=(t,title,fn)=>{const x=el("button","",t);x.title=title;x.addEventListener("click",e=>{e.stopPropagation();fn();});tools.appendChild(x);};
+    mk("差替","イラストを選び直す", async ()=>{ const fs=await pickFiles(false); await loadIllust(b, idx, fs); });
+    if(it.src) mk("反転","左右を反転する",()=>{ it.flip=!it.flip; render(); scheduleSave(); });
+    mk("←","左へ",()=>{ if(idx>0){ const t=b.items[idx-1]; b.items[idx-1]=b.items[idx]; b.items[idx]=t; render(); scheduleSave(); } });
+    mk("→","右へ",()=>{ if(idx<b.items.length-1){ const t=b.items[idx+1]; b.items[idx+1]=b.items[idx]; b.items[idx]=t; render(); scheduleSave(); } });
+    mk("削除","このイラストを削除",()=>{ b.items.splice(idx,1); render(); scheduleSave(); });
+    tile.appendChild(tools);
+
+    wrap.appendChild(tile);
+  });
+
+  wrap.addEventListener("dragover", e=>{ e.preventDefault(); wrap.classList.add("is-drop"); });
+  wrap.addEventListener("dragleave", ()=>wrap.classList.remove("is-drop"));
+  wrap.addEventListener("drop", async e=>{
+    e.preventDefault(); wrap.classList.remove("is-drop");
+    const fs = Array.from(e.dataTransfer.files||[]);
+    const first = b.items.findIndex(x=>!x.src);
+    await loadIllust(b, first<0 ? b.items.length : first, fs);
+  });
+
+  box.appendChild(wrap);
+  return box;
+}
+
+async function loadIllust(b, startIdx, files){
+  if(!files || !files.length) return;
+  const imgs = files.filter(f=>/^image\//.test(f.type));
+  if(!imgs.length){ alert("画像ファイルを選んでください。"); return; }
+  let idx = startIdx;
+  for(const f of imgs){
+    try{
+      /* 透過を保つため alpha:true（PNG出力）。イラストは小さいので800pxで足りる */
+      const url = await fileToDataURL(f, {alpha:true, max:800});
+      while(b.items.length <= idx) b.items.push(emptyIllust());
+      b.items[idx].src = url;
+      idx++;
+    }catch(err){
+      alert(err.message);
+    }
+  }
+  render(); scheduleSave();
+}
+
+const RENDERERS = {ribbon:renderRibbon, text:renderText, photos:renderPhotos, illust:renderIllust, bday:renderBday, essay:renderEssay};
 
 /* ===================== ブロック操作 ===================== */
 function moveBlock(id, dir){
@@ -994,6 +1196,7 @@ function render(){
     add("＋ 見出し帯","ribbon");
     add("＋ 本文","text");
     add("＋ 写真","photos");
+    add("＋ イラスト","illust");
     add("＋ お誕生日","bday");
     add("＋ 寄稿・作文","essay");
     bar.appendChild(el("span","sep"));
@@ -1027,6 +1230,15 @@ function queueOverflowCheck(){
   ovTimer = setTimeout(checkOverflow, 120);
 }
 function checkOverflow(){
+  /* 縦書きは文字が右から左へあふれる。左向きのあふれは scrollWidth に出ないので、
+     中身が必要としている幅（子要素の合計）と枠の幅を直接くらべる */
+  document.querySelectorAll(".tbox.vert,.essay.vert").forEach(v=>{
+    const blk = v.closest(".blk");
+    if(!blk) return;
+    let need = 0;
+    for(const ch of v.children) need += ch.offsetWidth;
+    blk.classList.toggle("vert-over", need > v.clientWidth + 2);
+  });
   document.querySelectorAll(".page").forEach(p=>{
     const b = p.querySelector(".page-body");
     p.classList.toggle("is-over", b.scrollHeight > b.clientHeight + 2);
@@ -1108,6 +1320,7 @@ function bindSide(){
         if(b.type==="bday"){ b.names=""; }
         if(b.type==="ribbon"){ b.text=""; }
         if(b.type==="photos") b.items.forEach(it=>{ it.src=""; it.cap=""; it.pos=50; });
+        /* イラストは季節の飾りとして次号でも使い回すことが多いので消さない */
       }));
     }
     doc = n;
